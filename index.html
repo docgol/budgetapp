@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Coin Quest Budget</title>
+  <meta name="description" content="A retro 8-bit themed budget tracker with a built-in mini game.">
+  <meta name="theme-color" content="#5c94fc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Coin Quest">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="logo px">COIN<span>QUEST</span></h1>
+    <div class="month-nav">
+      <button class="icon-btn" id="prev-month" aria-label="Previous month">◀</button>
+      <button class="month-label px" id="month-label" aria-label="Jump to current month"></button>
+      <button class="icon-btn" id="next-month" aria-label="Next month">▶</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- WORLD -->
+    <section class="screen active" id="screen-world" aria-label="Overview">
+      <div class="over-banner px" id="over-banner" hidden></div>
+
+      <div class="card hero">
+        <p class="eyebrow px" id="level-label">LEVEL</p>
+        <p class="coins-left px" id="coins-left">$0.00</p>
+        <p class="sub" id="coins-left-label">left to spend</p>
+        <div class="bar" aria-hidden="true"><i id="power-fill"></i></div>
+        <p class="bar-text" id="power-text"></p>
+        <button class="btn small" id="set-budget-btn" hidden>Set a monthly budget</button>
+        <div class="stats">
+          <div><span class="px tiny">INCOME</span><b id="stat-income" class="pos">$0</b></div>
+          <div><span class="px tiny">SPENT</span><b id="stat-spent" class="neg">$0</b></div>
+          <div><span class="px tiny">NET</span><b id="stat-net">$0</b></div>
+        </div>
+      </div>
+
+      <div class="scene" aria-hidden="true">
+        <div class="cloud c1"></div><div class="cloud c2"></div>
+        <canvas id="scene-coin" class="sprite bob"></canvas>
+        <canvas id="mascot" class="sprite mascot"></canvas>
+        <div class="pipe-deco"></div>
+        <div class="ground"></div>
+      </div>
+
+      <div class="card play-card">
+        <div>
+          <p class="px small-title">COIN RUN</p>
+          <p class="lives" id="lives" aria-label="Lives"></p>
+          <p class="sub" id="game-note"></p>
+        </div>
+        <button class="pipe-btn px" id="play-btn"><span>PLAY</span></button>
+      </div>
+
+      <div class="card">
+        <h2 class="px card-title">TOP SPENDING</h2>
+        <div id="world-cats"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="px card-title">RECENT</h2>
+        <ul class="tx-list" id="recent"></ul>
+      </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="screen" id="screen-cats" aria-label="Categories">
+      <div class="card">
+        <h2 class="px card-title">WORLDS</h2>
+        <p class="sub">Each category is a world with its own monthly limit.</p>
+        <ul class="cat-list" id="cat-list"></ul>
+        <button class="btn full" id="new-cat-btn">+ New category</button>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="screen" id="screen-history" aria-label="History">
+      <div class="card">
+        <h2 class="px card-title">SPENDING BY CATEGORY</h2>
+        <div id="cat-chart"></div>
+      </div>
+      <div class="card">
+        <h2 class="px card-title">LAST 6 MONTHS</h2>
+        <div class="legend"><span><i class="lg-inc"></i>Income</span><span><i class="lg-exp"></i>Spent</span></div>
+        <div id="month-chart"></div>
+      </div>
+      <div class="card">
+        <h2 class="px card-title">ALL ENTRIES</h2>
+        <ul class="tx-list" id="tx-list"></ul>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="screen" id="screen-settings" aria-label="Settings">
+      <div class="card">
+        <h2 class="px card-title">BUDGET</h2>
+        <form id="budget-form" class="inline-form">
+          <label class="field"><span id="budget-label">Monthly budget</span>
+            <input id="budget-input" inputmode="decimal" autocomplete="off" placeholder="2000">
+          </label>
+          <button class="btn" type="submit">Save</button>
+        </form>
+        <p class="sub">This budget carries forward to later months until you change it.</p>
+      </div>
+      <div class="card">
+        <h2 class="px card-title">OPTIONS</h2>
+        <label class="field"><span>Currency symbol</span>
+          <input id="currency-input" maxlength="4" autocomplete="off">
+        </label>
+        <label class="switch"><input type="checkbox" id="sound-input"><span>Sound effects</span></label>
+      </div>
+      <div class="card">
+        <h2 class="px card-title">SAVE DATA</h2>
+        <p class="sub">Your data lives only in this browser on this device. Export a backup now and then.</p>
+        <div class="btn-col">
+          <button class="btn full" id="export-btn">Export backup</button>
+          <button class="btn full ghost" id="import-btn">Import backup</button>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+          <button class="btn full danger" id="reset-btn">Reset everything</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabs" aria-label="Main">
+    <button class="tab active" data-screen="world"><span class="ti">🏰</span><span class="px">WORLD</span></button>
+    <button class="tab" data-screen="cats"><span class="ti">🗺️</span><span class="px">CATS</span></button>
+    <button class="tab add" id="add-btn" aria-label="Add entry"><span class="block px">+</span></button>
+    <button class="tab" data-screen="history"><span class="ti">📜</span><span class="px">LOG</span></button>
+    <button class="tab" data-screen="settings"><span class="ti">⚙️</span><span class="px">MENU</span></button>
+  </nav>
+
+  <!-- Transaction dialog -->
+  <dialog id="tx-dialog">
+    <form id="tx-form" novalidate>
+      <h2 class="px dlg-title" id="tx-title">NEW ENTRY</h2>
+      <div class="seg" role="radiogroup" aria-label="Type">
+        <label><input type="radio" name="type" value="expense" checked><span>Expense</span></label>
+        <label><input type="radio" name="type" value="income"><span>Income</span></label>
+      </div>
+      <label class="field"><span>Amount</span>
+        <input name="amount" inputmode="decimal" autocomplete="off" placeholder="0.00" required>
+      </label>
+      <label class="field" id="tx-cat-field"><span>Category</span><select name="category"></select></label>
+      <label class="field"><span>Note</span><input name="note" maxlength="60" autocomplete="off" placeholder="What was it?"></label>
+      <label class="field"><span>Date</span><input name="date" type="date" required></label>
+      <input type="hidden" name="id">
+      <p class="form-error" id="tx-error" hidden></p>
+      <div class="row-btns">
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+      <button type="button" class="btn full danger" id="tx-delete" hidden>Delete entry</button>
+    </form>
+  </dialog>
+
+  <!-- Category dialog -->
+  <dialog id="cat-dialog">
+    <form id="cat-form" novalidate>
+      <h2 class="px dlg-title" id="cat-title">NEW CATEGORY</h2>
+      <label class="field"><span>Name</span><input name="name" maxlength="24" autocomplete="off" required></label>
+      <label class="field"><span>Icon (emoji)</span><input name="emoji" maxlength="8" autocomplete="off"></label>
+      <div class="emoji-picks" id="emoji-picks"></div>
+      <label class="field"><span>Monthly limit (0 = none)</span><input name="limit" inputmode="decimal" autocomplete="off" placeholder="0"></label>
+      <input type="hidden" name="id">
+      <p class="form-error" id="cat-error" hidden></p>
+      <div class="row-btns">
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+      <button type="button" class="btn full danger" id="cat-delete" hidden>Delete category</button>
+    </form>
+  </dialog>
+
+  <!-- Mini game -->
+  <div class="game" id="game" hidden>
+    <div class="game-top">
+      <button class="btn small" id="game-close">✕ EXIT</button>
+      <span class="lives" id="game-lives"></span>
+    </div>
+    <div class="game-stage" id="game-stage"><canvas id="game-canvas"></canvas></div>
+    <p class="game-hint px">TAP TO JUMP · HOLD TO JUMP HIGHER<br>STOMP THE BILLS · GRAB THE COINS</p>
+  </div>
+
+  <div class="toast px" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="game.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
